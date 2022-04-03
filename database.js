@@ -24,6 +24,6 @@ module.exports = {
         return PlayerData.findById(key);
     },
     getAll: function () {
-        return PlayerData.find({});
+        return PlayerData.find().exec();
     }
 };
