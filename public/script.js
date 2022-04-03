@@ -43,13 +43,13 @@ if (fetch) {
     // });
     let promise = fetch('/db').then(response => response.json());
     window.addEventListener('DOMContentLoaded', () => {
-        const table = document.getElementById('farmerz-data');
-        const farmerzInfoName = document.getElementById('farmerz-info-name'),
-            farmerzInfoGold = document.getElementById('farmerz-info-gold'),
-            farmerzInfoScore = document.getElementById('farmerz-info-score'),
-            farmerzInfoItems = document.getElementById('farmerz-info-items'),
-            farmerzInfoPlayerJson = document.getElementById('farmerz-info-player-json'),
-            farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json');
+        const farmerzTable = document.getElementById('farmerz-data'),
+              farmerzInfoName = document.getElementById('farmerz-info-name'),
+              farmerzInfoGold = document.getElementById('farmerz-info-gold'),
+              farmerzInfoScore = document.getElementById('farmerz-info-score'),
+              farmerzInfoItems = document.getElementById('farmerz-info-items'),
+              farmerzInfoPlayerJson = document.getElementById('farmerz-info-player-json'),
+              farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json');
         promise.then(data => {
             farmerzData = data;
             farmerzTable.deleteRow(1);
