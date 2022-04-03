@@ -21,7 +21,7 @@ module.exports = {
         return doc.save();
     },
     get: function (key) {
-        return PlayerData.findById(key).exec().then(e => e.data);
+        return PlayerData.findById(key).exec().then(e => e && e.data);
     },
     getAll: function () {
         return new Promise((resolve, reject) => {
