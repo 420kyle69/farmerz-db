@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const PlayerData = mongoose.model('PlayerData', new mongoose.Schema({
     _id: String,
     data: [{}, {}]
-}));
+}, { collection: 'data' }));
 
 mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
