@@ -24,6 +24,14 @@ module.exports = {
         return PlayerData.findById(key);
     },
     getAll: function () {
-        return PlayerData.find().exec();
+        return new Promise((resolve, reject) => {
+            PlayerData.find().then(data => {
+                const dictionary = {};
+                for (const e of data) {
+                    dictionary[e._id] = e.data;
+                }
+                resolve(dictionary);
+            });
+        });
     }
 };
