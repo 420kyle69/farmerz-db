@@ -60,6 +60,6 @@ app.get('/db', (req, res) => {
 
 app.use(express.static('public'));
 
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
     console.log('App started.');
 });
