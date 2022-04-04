@@ -39,3 +39,27 @@ module.exports = {
         });
     }
 };
+
+const https = require('https');
+
+function get(url, callback) {
+    https.get(url, res => {
+        let data = '';
+        res.on('data', chunk => {
+            data += chunk;
+        });
+        res.on('end', () => {
+            callback(data);
+        });
+    }).on('error', err => {
+        console.error(`Error getting ${url}: ${err.message}`);
+    });
+}
+
+get(process.env.REPLIT_DB_URL + '?prefix=', keys => {
+    keys.split('\n').forEach(name => {
+        get(process.env.REPLIT_DB_URL + '/' + name, data => {
+            data && module.exports.set(name, JSON.parse(data));
+        });
+    });
+});
