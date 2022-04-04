@@ -20,11 +20,7 @@ db.once('open', () => console.log('✅ mongodb connected successfully'));
 
 module.exports = {
     set: function (key, value) {
-        return PlayerData.findById(key).exec().then(doc => {
-            if (doc) doc.overwrite({ data: value });
-            else doc = new PlayerData({ _id: key, data: value });
-            return doc.save();
-        });
+        return PlayerData.updateOne({ _id: key }, { _id: key, data: value }, { upsert: true });
     },
     get: function (key) {
         return PlayerData.findById(key).exec().then(doc => doc && doc.data);
