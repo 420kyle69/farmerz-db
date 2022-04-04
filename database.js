@@ -27,7 +27,7 @@ module.exports = {
         return PlayerData.findById(key).exec().then(doc => doc && doc.data);
     },
     getAll: function () {
-        PlayerData.find().exec().then(data => {
+        return PlayerData.find().exec().then(data => {
             const dictionary = {};
             for (const e of data) {
                 dictionary[e._id] = e.data;
