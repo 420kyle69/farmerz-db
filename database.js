@@ -17,21 +17,22 @@ db.once('open', () => console.log('✅ mongodb connected successfully'));
 
 module.exports = {
     set: function (key, value) {
-        const doc = new PlayerData({ _id: key, data: value });
-        return doc.save();
+        return PlayerData.findById(key).exec().then(doc => {
+            if (doc) doc.overwrite({ data: value });
+            else doc = new PlayerData({ _id: key, data: value });
+            return doc.save();
+        });
     },
     get: function (key) {
-        return PlayerData.findById(key).exec().then(e => e && e.data);
+        return PlayerData.findById(key).exec().then(doc => doc && doc.data);
     },
     getAll: function () {
-        return new Promise((resolve, reject) => {
-            PlayerData.find().then(data => {
-                const dictionary = {};
-                for (const e of data) {
-                    dictionary[e._id] = e.data;
-                }
-                resolve(dictionary);
-            });
+        PlayerData.find().exec().then(data => {
+            const dictionary = {};
+            for (const e of data) {
+                dictionary[e._id] = e.data;
+            }
+            return dictionary;
         });
     }
 };
