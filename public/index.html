@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>farmerz-db</title>
+    <link rel="icon" type="image/png" href="https://cache.modd.io/asset/spriteImage/1535609455374_skin1.png" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	 crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+	 crossorigin="anonymous">
+	</script>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script> -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+	 crossorigin="anonymous">
+	</script>
+	<script src="./script.js">
+	</script>
+</head>
+
+<body>
+	<div class="m-3">
+		<h2>Farmerz.io Leaderboard</h2>
+		<table id="farmerz-data" class="table table-bordered table-striped">
+			<tr>
+				<th>Name</th>
+				<th>Gold</th>
+				<th>Score</th>
+			</tr>
+            <tr>
+                <td colspan="3">Loading...</td>
+            </tr>
+		</table>
+	</div>
+
+    <div id="farmerz-info-modal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Player info</h5>
+                    <button class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        Name: <b id="farmerz-info-name">...</b>
+                    </div>
+                    <div class="form-group">
+                        Gold: <b id="farmerz-info-gold">...</b>
+                    </div>
+                    <div class="form-group">
+                        Score: <b id="farmerz-info-score">...</b>
+                    </div>
+                    <div class="form-group">
+                        Items:
+                        <ul id="farmerz-info-items">
+                            <li>Saffron - 100x</li>
+                        </ul>
+                    </div>
+                    <div class="form-group">
+                        Player JSON:
+                        <textarea id="farmerz-info-player-json" class="form-control" readonly></textarea>
+                    </div>
+                    <div class="form-group">
+                        Unit JSON:
+                        <textarea id="farmerz-info-unit-json" class="form-control" readonly></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
