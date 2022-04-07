@@ -5,7 +5,7 @@ const db = require("./database"),
 app.use(express.urlencoded({extended: true, limit: '64kb'}));
 
 app.post('/', (req, res) => {
-    console.log(req.body[KEY], 'request recieved');
+    console.log(req.body[KEY], 'request recieved for', req.body.name);
     switch (req.body[KEY]) {
         case 'store':
             try {
