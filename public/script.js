@@ -72,8 +72,8 @@ if (fetch) {
                     $('#farmerz-info-name').text(entry[0]);
                     $('#farmerz-info-gold').text(goldOf(player).toLocaleString());
                     $('#farmerz-info-score').text(pointsOf(player).toLocaleString());
-                    farmerzInfoPlayerJson.innerText = JSON.stringify(player);
-                    farmerzInfoUnitJson.innerText = JSON.stringify(unit);
+                    farmerzInfoPlayerJson.value = JSON.stringify(player);
+                    farmerzInfoUnitJson.value = JSON.stringify(unit);
                     $(farmerzInfoItems).empty();
                     if (unit.inventoryItems) unit.inventoryItems.forEach(item => {
                         const li = document.createElement('li');
