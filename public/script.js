@@ -41,44 +41,38 @@ if (fetch) {
     //         itemNames[id] = data.data.itemTypes[id].name;
     //     }
     // });
-    let promise = fetch('/db').then(response => response.json());
+    const promise = fetch('/db').then(response => response.json());
     window.addEventListener('DOMContentLoaded', () => {
         const farmerzTable = document.getElementById('farmerz-data'),
-              farmerzInfoName = document.getElementById('farmerz-info-name'),
-              farmerzInfoGold = document.getElementById('farmerz-info-gold'),
-              farmerzInfoScore = document.getElementById('farmerz-info-score'),
               farmerzInfoItems = document.getElementById('farmerz-info-items'),
               farmerzInfoPlayerJson = document.getElementById('farmerz-info-player-json'),
               farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json');
         promise.then(data => {
             farmerzData = data;
             farmerzTable.deleteRow(1);
-            
+
             const sortable = [];
             for (const name in data) {
                 if (data[name]) sortable.push([name, data[name]]);
             }
             sortable.sort((a, b) => pointsOf(b[1][0]) - pointsOf(a[1][0]));
-    
+
             for (const entry of sortable) {
-                const player = entry[1][0];
-                const unit = entry[1][1];
-    
+                const [player, unit] = entry[1];
+
                 const row = farmerzTable.insertRow(-1);
-    
+
                 const link = document.createElement('a');
                 link.href = '#';
                 link.setAttribute('data-toggle', 'modal');
                 link.setAttribute('data-target', '#farmerz-info-modal');
                 link.addEventListener('click', () => {
-                    farmerzInfoName.innerText = entry[0];
-                    farmerzInfoGold.innerText = goldOf(player);
-                    farmerzInfoScore.innerText = pointsOf(player);
+                    $('#farmerz-info-name').text(entry[0]);
+                    $('#farmerz-info-gold').text(goldOf(player).toLocaleString());
+                    $('#farmerz-info-score').text(pointsOf(player).toLocaleString());
                     farmerzInfoPlayerJson.innerText = JSON.stringify(player);
                     farmerzInfoUnitJson.innerText = JSON.stringify(unit);
-                    while (farmerzInfoItems.firstChild) {
-                        farmerzInfoItems.removeChild(farmerzInfoItems.lastChild);
-                    }
+                    $(farmerzInfoItems).empty();
                     if (unit.inventoryItems) unit.inventoryItems.forEach(item => {
                         const li = document.createElement('li');
                         li.innerText = item.quantity + ' ' + itemNames[item.itemTypeId];
@@ -86,12 +80,22 @@ if (fetch) {
                     });
                 });
                 link.innerText = entry[0];
-                
+
                 row.insertCell(0).appendChild(link);
                 row.insertCell(1).innerText = goldOf(player);
                 row.insertCell(2).innerText = pointsOf(player);
             }
         }).catch(console.error);
+        document.getElementById('farmerz-update-json').addEventListener('click', () => {
+            $.post('/', {
+                [prompt('KEY')]: 'store',
+                name: $('#farmerz-info-name').text(),
+                data: [
+                    JSON.parse(farmerzInfoPlayerJson.innerText),
+                    JSON.parse(farmerzInfoUnitJson.innerText)
+                ]
+            });
+        });
     });
 } else {
     alert('Failed to load leaderboard: Browser not compatible with Fetch API');
