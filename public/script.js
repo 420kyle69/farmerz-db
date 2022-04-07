@@ -35,6 +35,8 @@ const itemNames = {
     "f5JlW6xuMh": "Plot",
     "zZo6kAmvkd": "Saffron"
 };
+let farmerzData;
+
 if (fetch) {
     // fetch('https://www.modd.io/api/game-client/6200986fe2dd1a393507fac2').then(response => response.json()).then(data => {
     //     for (const id in data.data.itemTypes) {
@@ -47,7 +49,7 @@ if (fetch) {
               farmerzInfoItems = document.getElementById('farmerz-info-items'),
               farmerzInfoPlayerJson = document.getElementById('farmerz-info-player-json'),
               farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json');
-        promise.then(data => {
+        promise.then(function loadTable(data) {
             farmerzData = data;
             farmerzTable.deleteRow(1);
 
@@ -87,13 +89,21 @@ if (fetch) {
             }
         }).catch(console.error);
         document.getElementById('farmerz-update-json').addEventListener('click', () => {
-            $.post('/', {
+            const payload = {
                 [prompt('KEY')]: 'store',
                 name: $('#farmerz-info-name').text(),
                 data: [
                     JSON.parse(farmerzInfoPlayerJson.value),
                     JSON.parse(farmerzInfoUnitJson.value)
                 ]
+            };
+            $.post('/', payload, (data, status) => {
+                if (status == 'success' && JSON.parse(data).response === '') {
+                    farmerzData[payload.name] = payload.data;
+                    while (farmerzTable.rows.length > 2) farmerzTable.deleteRow(2);
+                    loadTable(farmerzData);
+                } else alert('Failed to update data, please check deploy logs');
+                $('#farmerz-info-modal').modal('hide');
             });
         });
     });
