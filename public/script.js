@@ -91,8 +91,8 @@ if (fetch) {
                 [prompt('KEY')]: 'store',
                 name: $('#farmerz-info-name').text(),
                 data: [
-                    JSON.parse(farmerzInfoPlayerJson.innerText),
-                    JSON.parse(farmerzInfoUnitJson.innerText)
+                    JSON.parse(farmerzInfoPlayerJson.value),
+                    JSON.parse(farmerzInfoUnitJson.value)
                 ]
             });
         });
