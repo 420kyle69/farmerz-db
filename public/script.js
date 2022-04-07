@@ -98,7 +98,7 @@ if (fetch) {
                 ]
             };
             $.post('/', payload, (data, status) => {
-                if (status == 'success' && JSON.parse(data).response === '') {
+                if (status == 'success' && data.response === '') {
                     farmerzData[payload.name] = payload.data;
                     while (farmerzTable.rows.length > 2) farmerzTable.deleteRow(2);
                     loadTable(farmerzData);
