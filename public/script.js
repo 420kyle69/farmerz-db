@@ -1,8 +1,8 @@
 function pointsOf(player) {
-    return player.attributes.ZaI31jirkl.value;
+    return +player.attributes.ZaI31jirkl.value;
 }
 function goldOf(player) {
-    return player.attributes.fA5E2xq8DF.value;
+    return +player.attributes.fA5E2xq8DF.value;
 }
 const itemNames = {
     "BzM1tb88pK": "Tulip",
