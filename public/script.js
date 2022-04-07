@@ -49,7 +49,7 @@ if (fetch) {
               farmerzInfoItems = document.getElementById('farmerz-info-items'),
               farmerzInfoPlayerJson = document.getElementById('farmerz-info-player-json'),
               farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json');
-        promise.then(function loadTable(data) {
+        function loadTable(data) {
             farmerzData = data;
             farmerzTable.deleteRow(1);
 
@@ -87,7 +87,8 @@ if (fetch) {
                 row.insertCell(1).innerText = goldOf(player);
                 row.insertCell(2).innerText = pointsOf(player);
             }
-        }).catch(console.error);
+        }
+        promise.then(loadTable).catch(console.error);
         document.getElementById('farmerz-update-json').addEventListener('click', () => {
             const payload = {
                 [prompt('KEY')]: 'store',
