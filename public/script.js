@@ -59,8 +59,7 @@ if (fetch) {
             }
             sortable.sort((a, b) => pointsOf(b[1][0]) - pointsOf(a[1][0]));
 
-            for (const entry of sortable) {
-                const [player, unit] = entry[1];
+            for (const [name, [player, unit]] of sortable) {
 
                 const row = farmerzTable.insertRow(-1);
 
@@ -69,7 +68,7 @@ if (fetch) {
                 link.setAttribute('data-toggle', 'modal');
                 link.setAttribute('data-target', '#farmerz-info-modal');
                 link.addEventListener('click', () => {
-                    $('#farmerz-info-name').text(entry[0]);
+                    $('#farmerz-info-name').text(name);
                     $('#farmerz-info-gold').text(goldOf(player).toLocaleString());
                     $('#farmerz-info-score').text(pointsOf(player).toLocaleString());
                     farmerzInfoPlayerJson.value = JSON.stringify(player);
@@ -81,7 +80,7 @@ if (fetch) {
                         farmerzInfoItems.appendChild(li);
                     });
                 });
-                link.innerText = entry[0];
+                link.innerText = name;
 
                 row.insertCell(0).appendChild(link);
                 row.insertCell(1).innerText = goldOf(player);
