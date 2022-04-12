@@ -2,10 +2,10 @@ const db = require("./database"),
     express = require('express'),
     app = express(),
     KEY = process.env.KEY;
-app.use(express.urlencoded({extended: true, limit: '64kb'}));
+app.use(express.urlencoded({ extended: true, limit: '64kb' }));
 
 app.post('/', (req, res) => {
-    console.log(req.body[KEY], 'request recieved for', req.body.name);
+    console.log('%s request recieved for %s', req.body[KEY], req.body.name);
     switch (req.body[KEY]) {
         case 'store':
             try {
@@ -33,29 +33,29 @@ app.post('/', (req, res) => {
                 });
 
                 db.set(req.body.name, data).then(() => {
-                    res.send({response: ''});
+                    res.send({ response: '' });
                 });
             } catch (e) {
                 console.error('Error processing request:', req.body, e);
-                res.send({response: 'error'});
+                res.send({ response: 'error' });
             }
             break;
         case 'retrieve':
             db.get(req.body.name).then(data => {
                 if (data)
-                    res.send({response: JSON.stringify([req.body.name, ...data.map(JSON.stringify)])});
+                    res.send({ response: JSON.stringify([req.body.name, ...data.map(JSON.stringify)]) });
                 else
-                    res.send({response: JSON.stringify([req.body.name, 'none'])});
+                    res.send({ response: JSON.stringify([req.body.name, 'none']) });
             });
             break;
         default:
             console.error('Unrecognized request:', req.body);
-            res.send({response: 'error'});
+            res.send({ response: 'error' });
     }
 });
 
 app.get('/db', (req, res) => {
-    db.getAll().then(data => res.send(data));
+    db.getAll().then(res.send);
 });
 
 app.use(express.static('public'));
