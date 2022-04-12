@@ -48,8 +48,8 @@ if (fetch) {
         const farmerzTable = document.getElementById('farmerz-data'),
               farmerzInfoItems = document.getElementById('farmerz-info-items'),
               farmerzInfoPlayerJson = document.getElementById('farmerz-info-player-json'),
-              farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json'),
-              KEY = prompt('KEY');
+              farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json');
+        let KEY = null;
         function loadTable(data) {
             farmerzData = data;
             while (farmerzTable.rows.length > 1) farmerzTable.deleteRow(1);
@@ -91,7 +91,7 @@ if (fetch) {
         promise.then(loadTable).catch(console.error);
         new WebSocket(`wss://${window.location.hostname}`).addEventListener('message', event => {
             $.post('/', {
-                [KEY]: 'retrieve',
+                [KEY || (KEY = prompt('KEY'))]: 'retrieve',
                 name: event.data
             }, (data, status) => {
                 if (status == 'success') {
@@ -106,7 +106,7 @@ if (fetch) {
         });
         document.getElementById('farmerz-update-json').addEventListener('click', () => {
             $.post('/', {
-                [KEY]: 'store',
+                [KEY || (KEY = prompt('KEY'))]: 'store',
                 name: $('#farmerz-info-name').text(),
                 data: [
                     JSON.parse(farmerzInfoPlayerJson.value),
