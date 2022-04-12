@@ -94,7 +94,7 @@ if (fetch) {
                 [KEY || (KEY = prompt('KEY'))]: 'retrieve',
                 name: event.data
             }, (data, status) => {
-                if (status == 'success') {
+                if (status == 'success' && data.response != 'error') {
                     const response = JSON.parse(data.response);
                     if (response[1] == 'none') delete farmerzData[response[0]];
                     else {
