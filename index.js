@@ -58,7 +58,7 @@ app.post('/', (req, res) => {
 });
 
 app.get('/db', (req, res) => {
-    db.getAll().then(res.send);
+    db.getAll().then(data => res.send(data));
 });
 
 app.use(express.static('public'));
