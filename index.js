@@ -1,7 +1,9 @@
 const db = require("./database"),
     express = require('express'),
     app = express(),
-    KEY = process.env.KEY;
+    KEY = process.env.KEY,
+    clients = new Set();
+require('express-ws')(app);
 app.use(express.urlencoded({ extended: true, limit: '64kb' }));
 
 app.post('/', (req, res) => {
@@ -34,6 +36,7 @@ app.post('/', (req, res) => {
 
                 db.set(req.body.name, data).then(() => {
                     res.send({ response: '' });
+                    clients.forEach(ws => ws.send(req.body.name));
                 });
             } catch (e) {
                 console.error('Error processing request:', req.body, e);
@@ -59,6 +62,11 @@ app.get('/db', (req, res) => {
 });
 
 app.use(express.static('public'));
+
+app.ws('/', ws => {
+    clients.add(ws);
+    ws.on('close', () => clients.delete(ws));
+});
 
 app.listen(process.env.PORT, () => {
     console.log('App started.');

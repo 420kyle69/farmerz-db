@@ -48,10 +48,11 @@ if (fetch) {
         const farmerzTable = document.getElementById('farmerz-data'),
               farmerzInfoItems = document.getElementById('farmerz-info-items'),
               farmerzInfoPlayerJson = document.getElementById('farmerz-info-player-json'),
-              farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json');
+              farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json'),
+              KEY = prompt('KEY');
         function loadTable(data) {
             farmerzData = data;
-            farmerzTable.deleteRow(1);
+            while (farmerzTable.rows.length > 1) farmerzTable.deleteRow(1);
 
             const sortable = [];
             for (const name in data) {
@@ -88,21 +89,31 @@ if (fetch) {
             }
         }
         promise.then(loadTable).catch(console.error);
+        new WebSocket(`wss://${window.location.hostname}`).addEventListener('message', event => {
+            $.post('/', {
+                [KEY]: 'retrieve',
+                name: event.data
+            }, (data, status) => {
+                if (status == 'success') {
+                    const response = JSON.parse(data.response);
+                    if (response[1] == 'none') delete farmerzData[response[0]];
+                    else {
+                        farmerzData[response[0]] = response.slice(1).map(JSON.parse);
+                        loadTable(farmerzData);
+                    }
+                } else alert('Failed to get data, please check deploy logs');
+            });
+        });
         document.getElementById('farmerz-update-json').addEventListener('click', () => {
-            const payload = {
-                [prompt('KEY')]: 'store',
+            $.post('/', {
+                [KEY]: 'store',
                 name: $('#farmerz-info-name').text(),
                 data: [
                     JSON.parse(farmerzInfoPlayerJson.value),
                     JSON.parse(farmerzInfoUnitJson.value)
                 ]
-            };
-            $.post('/', payload, (data, status) => {
-                if (status == 'success' && data.response === '') {
-                    farmerzData[payload.name] = payload.data;
-                    while (farmerzTable.rows.length > 2) farmerzTable.deleteRow(2);
-                    loadTable(farmerzData);
-                } else alert('Failed to update data, please check deploy logs');
+            }, (data, status) => {
+                if (status != 'success' || data.response !== '') alert('Failed to send update, please check deploy logs');
                 $('#farmerz-info-modal').modal('hide');
             });
         });
