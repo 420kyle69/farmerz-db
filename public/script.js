@@ -134,7 +134,7 @@ if (fetch) {
             });
         });
         document.getElementById('update-key').addEventListener('click', () => {
-            KEY = $('#key-db').text();
+            KEY = $('#key-db').val();
             pending.retrieve.forEach(payload => {
                 delete payload[payload.KEY];
                 delete payload.KEY;
