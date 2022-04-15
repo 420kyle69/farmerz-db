@@ -49,6 +49,31 @@ if (fetch) {
               farmerzInfoItems = document.getElementById('farmerz-info-items'),
               farmerzInfoPlayerJson = document.getElementById('farmerz-info-player-json'),
               farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json');
+        let KEY;
+        function $retrieve(payload) {
+            return $.post('/', payload, (data, status) => {
+                if (status == 'success' && data.response != 'error') {
+                    const response = JSON.parse(data.response);
+                    if (response[1] == 'none') delete farmerzData[response[0]];
+                    else farmerzData[response[0]] = response.slice(1).map(JSON.parse);
+                    loadTable(farmerzData);
+                } else {
+                    console.error('Failed to get data, please check deploy logs');
+                    payload.KEY = KEY;
+                    pending.retrieve.push(payload);
+                }
+            });
+        }
+        function $store(payload) {
+            return $.post('/', payload, (data, status) => {
+                if (status != 'success' || data.response !== '') {
+                    console.error('Failed to send update, please check deploy logs');
+                    payload.KEY = KEY;
+                    pending.store.push(payload);
+                }
+                $('#farmerz-info-modal').modal('hide');
+            });
+        }
         function loadTable(data) {
             farmerzData = data;
             while (farmerzTable.rows.length > 1) farmerzTable.deleteRow(1);
@@ -88,33 +113,41 @@ if (fetch) {
             }
         }
         promise.then(loadTable).catch(console.error);
+        const pending = {
+            retrieve: [],
+            store: []
+        };
         new WebSocket(`wss://${window.location.hostname}`).addEventListener('message', event => {
-            $.post('/', {
-                [$('#farmerz-key').text()]: 'retrieve',
+            $retrieve({
+                [KEY]: 'retrieve',
                 name: event.data
-            }, (data, status) => {
-                if (status == 'success' && data.response != 'error') {
-                    const response = JSON.parse(data.response);
-                    if (response[1] == 'none') delete farmerzData[response[0]];
-                    else {
-                        farmerzData[response[0]] = response.slice(1).map(JSON.parse);
-                        loadTable(farmerzData);
-                    }
-                } else console.error('Failed to get data, please check deploy logs');
             });
         });
         document.getElementById('farmerz-update-json').addEventListener('click', () => {
-            $.post('/', {
-                [$('#farmerz-key').text()]: 'store',
+            $store({
+                [KEY]: 'store',
                 name: $('#farmerz-info-name').text(),
                 data: [
                     JSON.parse(farmerzInfoPlayerJson.value),
                     JSON.parse(farmerzInfoUnitJson.value)
                 ]
-            }, (data, status) => {
-                if (status != 'success' || data.response !== '') console.error('Failed to send update, please check deploy logs');
-                $('#farmerz-info-modal').modal('hide');
             });
+        });
+        document.getElementById('update-key').addEventListener('click', () => {
+            KEY = $('#key-db').text();
+            pending.retrieve.forEach(payload => {
+                delete payload[payload.KEY];
+                delete payload.KEY;
+                payload[KEY] = 'retrieve';
+                $retrieve(payload);
+            });
+            pending.store.forEach(payload => {
+                delete payload[payload.KEY];
+                delete payload.KEY;
+                payload[KEY] = 'store';
+                $store(payload);
+            });
+            pending.retrieve.length = pending.store.length = 0;
         });
     });
 } else {

@@ -18,8 +18,13 @@
 
 <body>
 	<div class="m-3">
-		<h2 style="float: left;">Farmerz.io Leaderboard</h2>
-        <input class="form-control" type="password" id="farmerz-key" placeholder="KEY" style="float: right; width: auto;">
+		<h2 class="float-left">Farmerz.io Leaderboard</h2>
+        <div class="input-group float-right" style="width: 30%">
+            <input class="form-control" type="password" id="key-db" placeholder="KEY">
+            <div class="input-group-append">
+                <button class="btn btn-primary" id="update-key">Update</button>
+            </div>
+        </div>
 		<table id="farmerz-data" class="table table-bordered table-striped">
 			<tr>
 				<th>Name</th>
