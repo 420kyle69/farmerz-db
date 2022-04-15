@@ -48,32 +48,9 @@ if (fetch) {
         const farmerzTable = document.getElementById('farmerz-data'),
               farmerzInfoItems = document.getElementById('farmerz-info-items'),
               farmerzInfoPlayerJson = document.getElementById('farmerz-info-player-json'),
-              farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json');
+              farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json'),
+              notice = document.getElementById('notice-text');
         let KEY;
-        function $retrieve(payload) {
-            return $.post('/', payload, (data, status) => {
-                if (status == 'success' && data.response != 'error') {
-                    const response = JSON.parse(data.response);
-                    if (response[1] == 'none') delete farmerzData[response[0]];
-                    else farmerzData[response[0]] = response.slice(1).map(JSON.parse);
-                    loadTable(farmerzData);
-                } else {
-                    console.error('Failed to get data, please check deploy logs');
-                    payload.KEY = KEY;
-                    pending.retrieve.push(payload);
-                }
-            });
-        }
-        function $store(payload) {
-            return $.post('/', payload, (data, status) => {
-                if (status != 'success' || data.response !== '') {
-                    console.error('Failed to send update, please check deploy logs');
-                    payload.KEY = KEY;
-                    pending.store.push(payload);
-                }
-                $('#farmerz-info-modal').modal('hide');
-            });
-        }
         function loadTable(data) {
             farmerzData = data;
             while (farmerzTable.rows.length > 1) farmerzTable.deleteRow(1);
@@ -115,13 +92,45 @@ if (fetch) {
         promise.then(loadTable).catch(console.error);
         const pending = {
             retrieve: [],
-            store: []
+            store: [],
+            count: 0
         };
-        new WebSocket(`wss://${window.location.hostname}`).addEventListener('message', event => {
+        function $retrieve(payload) {
+            return $.post('/', payload, (data, status) => {
+                if (status == 'success' && data.response != 'error') {
+                    const response = JSON.parse(data.response);
+                    if (response[1] == 'none') delete farmerzData[response[0]];
+                    else farmerzData[response[0]] = response.slice(1).map(JSON.parse);
+                    loadTable(farmerzData);
+                } else {
+                    console.error('Failed to get data, please check deploy logs');
+                    payload.KEY = KEY;
+                    pending.retrieve.push(payload);
+                    notice.innerText = `You have ${++pending.count} requests pending`;
+                }
+            });
+        }
+        function $store(payload) {
+            return $.post('/', payload, (data, status) => {
+                if (status != 'success' || data.response !== '') {
+                    console.error('Failed to send update, please check deploy logs');
+                    payload.KEY = KEY;
+                    pending.store.push(payload);
+                    notice.innerText = `You have ${++pending.count} requests pending`;
+                }
+                $('#farmerz-info-modal').modal('hide');
+            });
+        }
+        const ws = new WebSocket(`wss://${window.location.hostname}`);
+        ws.addEventListener('message', event => {
             $retrieve({
                 [KEY]: 'retrieve',
                 name: event.data
             });
+        });
+        ws.addEventListener('close', event => {
+            console.log('Connection to database closed', event);
+            notice.innerText = "You're offline";
         });
         document.getElementById('farmerz-update-json').addEventListener('click', () => {
             $store({
@@ -147,7 +156,8 @@ if (fetch) {
                 payload[KEY] = 'store';
                 $store(payload);
             });
-            pending.retrieve.length = pending.store.length = 0;
+            pending.retrieve.length = pending.store.length = pending.count = 0;
+            if (ws.readyState == WebSocket.OPEN) notice.innerText = '';
         });
     });
 } else {

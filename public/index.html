@@ -18,13 +18,16 @@
 
 <body>
 	<div class="m-3">
-		<h2 class="float-left">Farmerz.io Leaderboard</h2>
-        <div class="input-group float-right" style="width: 30%">
-            <input class="form-control" type="password" id="key-db" placeholder="KEY">
-            <div class="input-group-append">
-                <button class="btn btn-primary" id="update-key">Update</button>
+        <div class="clearfix">
+            <h2 class="float-left">Farmerz.io Leaderboard</h2>
+            <div class="input-group float-right" style="width: 30%">
+                <input class="form-control" type="password" id="key-db" placeholder="KEY">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" id="update-key">Update</button>
+                </div>
             </div>
         </div>
+        <p class="text-muted" id="notice-text"></p>
 		<table id="farmerz-data" class="table table-bordered table-striped">
 			<tr>
 				<th>Name</th>
