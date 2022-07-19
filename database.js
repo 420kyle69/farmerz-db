@@ -26,7 +26,7 @@ module.exports = {
         return PlayerData.findById(key).exec().then(doc => doc && doc.data);
     },
     getPage: function (page) {
-        const query = PlayerData.find().sort('-0.attributes.ZaI31jirkl.value').skip(page * 50).limit(50);
+        const query = PlayerData.find().sort({ '0.attributes.ZaI31jirkl.value': -1 }).skip(page * 50).limit(50);
         return query.exec().then(data => {
             const dictionary = {};
             for (const e of data) {
