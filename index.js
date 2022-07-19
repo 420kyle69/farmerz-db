@@ -57,8 +57,12 @@ app.post('/', (req, res) => {
     }
 });
 
-app.get('/db', (req, res) => {
-    db.getAll().then(data => res.send(data));
+app.get('/db/:page', (req, res) => {
+    const page = parseInt(req.params.page);
+    if (page >= 0)
+        db.getPage(page).then(data => res.send(data));
+    else
+        res.sendStatus(400);
 });
 
 app.use(express.static('public'));

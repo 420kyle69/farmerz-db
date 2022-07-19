@@ -43,25 +43,22 @@ if (fetch) {
     //         itemNames[id] = data.data.itemTypes[id].name;
     //     }
     // });
-    const promise = fetch('/db').then(response => response.json());
+    const promise = fetch('/db/0').then(response => response.json());
     window.addEventListener('DOMContentLoaded', () => {
         const farmerzTable = document.getElementById('farmerz-data'),
               farmerzInfoItems = document.getElementById('farmerz-info-items'),
               farmerzInfoPlayerJson = document.getElementById('farmerz-info-player-json'),
               farmerzInfoUnitJson = document.getElementById('farmerz-info-unit-json'),
+              pagination = document.querySelector('.pagination'),
               notice = document.getElementById('notice-text');
+        let page = 0;
         let KEY;
         function loadTable(data) {
             farmerzData = data;
             while (farmerzTable.rows.length > 1) farmerzTable.deleteRow(1);
 
-            const sortable = [];
             for (const name in data) {
-                if (data[name]) sortable.push([name, data[name]]);
-            }
-            sortable.sort((a, b) => pointsOf(b[1][0]) - pointsOf(a[1][0]));
-
-            for (const [name, [player, unit]] of sortable) {
+                const [player, unit] = data[name];
 
                 const row = farmerzTable.insertRow(-1);
 
@@ -90,6 +87,48 @@ if (fetch) {
             }
         }
         promise.then(loadTable).catch(console.error);
+        function loadPage() {
+            console.log(page);
+            fetch('/db/' + page).then(response => response.json()).then(loadTable);
+        }
+        pagination.firstElementChild.addEventListener('click', function() {
+            pagination.children[page + 1].classList.remove('active');
+            page--;
+            pagination.children[page + 1].classList.add('active');
+            if (page <= 0)
+                this.classList.add('disabled');
+            else
+                this.classList.remove('disabled');
+            pagination.lastElementChild.classList.remove('disabled');
+            loadPage();
+        });
+        pagination.lastElementChild.addEventListener('click', function() {
+            pagination.children[page + 1].classList.remove('active');
+            page++;
+            pagination.children[page + 1].classList.add('active');
+            if (page >= 3)
+                this.classList.add('disabled');
+            else
+                this.classList.remove('disabled');
+            pagination.firstElementChild.classList.remove('disabled');
+            loadPage();
+        });
+        pagination.querySelectorAll('li:not(:first-child):not(:last-child)').forEach(item => {
+            item.addEventListener('click', function() {
+                pagination.children[page + 1].classList.remove('active');
+                page = this.textContent - 1;
+                this.classList.add('active');
+                if (page <= 0)
+                    pagination.firstElementChild.classList.add('disabled');
+                else
+                    pagination.firstElementChild.classList.remove('disabled');
+                if (page >= 3)
+                    pagination.lastElementChild.classList.add('disabled');
+                else
+                    pagination.lastElementChild.classList.remove('disabled');
+                loadPage();
+            });
+        });
         const pending = {
             retrieve: [],
             store: [],
