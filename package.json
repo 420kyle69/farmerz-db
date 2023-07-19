@@ -12,7 +12,7 @@
     "axios": "^0.26.0",
     "express": "^4.17.1",
     "express-ws": "^5.0.2",
-    "mongoose": "^5.13.14"
+    "mongoose": "^5.13.20"
   },
   "engines": {
     "node" : "^16.16.0"
